@@ -308,6 +308,9 @@ static inline int fio_set_sched_idle(void)
 #ifndef RWF_SYNC
 #define RWF_SYNC	0x00000004
 #endif
+#ifndef RWF_IOPRI
+#define RWF_IOPRI	0x00000010
+#endif
 
 #ifndef CONFIG_PWRITEV2
 #ifdef __NR_preadv2
