@@ -70,6 +70,7 @@ static inline void ring_inc(struct libaio_data *ld, unsigned int *val,
 static int fio_libaio_prep(struct thread_data fio_unused *td, struct io_u *io_u)
 {
 	struct fio_file *f = io_u->file;
+	unsigned int ioprio;
 
 	if (io_u->ddir == DDIR_READ)
 		io_prep_pread(&io_u->iocb, f->fd, io_u->xfer_buf, io_u->xfer_buflen, io_u->offset);
@@ -77,6 +78,13 @@ static int fio_libaio_prep(struct thread_data fio_unused *td, struct io_u *io_u)
 		io_prep_pwrite(&io_u->iocb, f->fd, io_u->xfer_buf, io_u->xfer_buflen, io_u->offset);
 	else if (ddir_sync(io_u->ddir))
 		io_prep_fsync(&io_u->iocb, f->fd);
+
+	ioprio = td->o.cmnd_ioprio_class << IOPRIO_CLASS_SHIFT;
+	if (ioprio){
+		ioprio |= td->o.cmnd_ioprio;
+		io_u->iocb.aio_reqprio = ioprio;
+		io_u->iocb.u.c.flags = IOCB_FLAG_IOPRIO;
+	}
 
 	return 0;
 }

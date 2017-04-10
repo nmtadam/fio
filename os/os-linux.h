@@ -138,6 +138,10 @@ static inline int gettid(void)
 #define BLKDISCARD	_IO(0x12,119)
 #endif
 
+#ifndef IOCB_FLAG_IOPRIO
+#define IOCB_FLAG_IOPRIO    (1 << 1)
+#endif
+
 static inline int blockdev_invalidate_cache(struct fio_file *f)
 {
 	return ioctl(f->fd, BLKFLSBUF);
