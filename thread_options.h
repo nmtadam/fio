@@ -207,6 +207,8 @@ struct thread_options {
 	unsigned int nice;
 	unsigned int ioprio;
 	unsigned int ioprio_class;
+	unsigned int cmnd_ioprio;
+	unsigned int cmnd_ioprio_class;
 	unsigned int file_service_type;
 	unsigned int group_reporting;
 	unsigned int stats;
