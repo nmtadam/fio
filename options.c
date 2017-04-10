@@ -3193,6 +3193,7 @@ struct fio_option fio_options[FIO_MAX_OPTS] = {
 		.help	= "Your platform does not support IO priorities",
 	},
 #endif
+
 #ifdef FIO_HAVE_IOPRIO_CLASS
 #ifndef FIO_HAVE_IOPRIO
 #error "FIO_HAVE_IOPRIO_CLASS requires FIO_HAVE_IOPRIO"
@@ -3217,6 +3218,50 @@ struct fio_option fio_options[FIO_MAX_OPTS] = {
 		.help	= "Your platform does not support IO priority classes",
 	},
 #endif
+
+#ifdef CONFIG_AIO_ABI_IOPRIO
+#ifndef FIO_HAVE_IOPRIO
+#error "Cmnd priority requires FIO_HAVE_IOPRIO"
+#endif
+	{
+		.name	= "cmndprio",
+		.lname	= "libaio command I/O nice priority",
+		.type	= FIO_OPT_INT,
+		.off1	= offsetof(struct thread_options, cmnd_ioprio),
+		.help	= "Set libaio command IO priority value",
+		.minval	= IOPRIO_MIN_PRIO,
+		.maxval	= IOPRIO_MAX_PRIO,
+		.interval = 1,
+		.category = FIO_OPT_C_GENERAL,
+		.group	= FIO_OPT_G_CRED,
+	},
+	{
+		.name	= "cmndprioclass",
+		.lname	= "AIO request based I/O priority class",
+		.type	= FIO_OPT_INT,
+		.off1	= offsetof(struct thread_options, cmnd_ioprio_class),
+		.help	= "Set aio request priority",
+		.minval	= IOPRIO_MIN_PRIO_CLASS,
+		.maxval	= IOPRIO_MAX_PRIO_CLASS,
+		.interval = 1,
+		.category = FIO_OPT_C_GENERAL,
+		.group	= FIO_OPT_G_CRED,
+	},
+#else
+	{
+		.name	= "cmndprio",
+		.lname	= "libaio command I/O nice priority",
+		.type	= FIO_OPT_UNSUPPORTED,
+		.help	= "Your platform does not support IO priorities",
+	},
+	{
+		.name	= "cmndprioclass",
+		.lname	= "AIO request based I/O priority class",
+		.type	= FIO_OPT_UNSUPPORTED,
+		.help	= "Your platform does not support IO priority classes",
+	},
+#endif
+
 	{
 		.name	= "thinktime",
 		.lname	= "Thinktime",
