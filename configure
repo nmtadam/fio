@@ -562,6 +562,33 @@ fi
 echo "Linux AIO support             $libaio"
 
 ##########################################
+# linux-aio-abi-ioprio probe
+if test "$aio_abi_ioprio" != "yes" ; then
+  aio_abi_ioprio="no"
+fi
+if test "$esx" != "yes" ; then
+  cat > $TMPC <<EOF
+#include <linux/aio_abi.h>
+#include <stddef.h>
+int main(void)
+{
+  struct iocb cb;
+  cb.aio_flags = IOCB_FLAG_IOPRIO;
+  return 0;
+}
+EOF
+  if compile_prog; then
+    aio_abi_ioprio=yes
+  else
+    if test "$aio_abi_ioprio" = "yes" ; then
+      feature_not_found "linux AIO ABI IOPRIO" "introduced in kernel 4.x.x"
+    fi
+    aio_abi_ioprio=no
+  fi
+fi
+echo "Linux AIO ABI IOPRIO support  $aio_abi_ioprio"
+
+##########################################
 # posix aio probe
 if test "$posix_aio" != "yes" ; then
   posix_aio="no"
@@ -2034,6 +2061,9 @@ if test "$zlib" = "yes" ; then
 fi
 if test "$libaio" = "yes" ; then
   output_sym "CONFIG_LIBAIO"
+fi
+if test "$aio_abi_ioprio" = "yes" ; then
+  output_sym "CONFIG_AIO_ABI_IOPRIO"
 fi
 if test "$posix_aio" = "yes" ; then
   output_sym "CONFIG_POSIXAIO"
